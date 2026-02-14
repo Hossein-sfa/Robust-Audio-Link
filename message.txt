@@ -1,0 +1,7 @@
+This project demonstrates how encrypted data can be transmitted over an audio channel using robust frequency shift keying. A plaintext message is first encrypted with AES-256 in CTR mode to ensure confidentiality. The encrypted bytes are then placed inside a structured frame that includes a magic header, payload length, and a CRC32 checksum for integrity verification. To improve reliability in noisy conditions, each bit is repetition coded before modulation.
+
+The modulator converts bits into two distinct carrier frequencies within the telephone band: 1200 Hz represents binary zero and 2200 Hz represents binary one. A synchronization preamble is added at the beginning of the transmission so the receiver can detect where the data starts. The final waveform is written to a standard mono WAV file at 44.1 kHz. Optionally, the modulated signal can be mixed into a cover audio file to make the transmission less noticeable.
+
+On the receiving side, the WAV file is loaded and preprocessed by removing DC offset, normalizing amplitude, and applying a band-pass filter to isolate the target frequency range. The receiver scans for the preamble, aligns the bit boundaries, and detects each bit using phase-robust I/Q energy comparison between the two carrier frequencies. Majority voting corrects minor errors. After reconstructing the frame and validating the CRC, the ciphertext is decrypted to recover the original message.
+
+To use the system, run the sender with a message to generate an encoded WAV file, then pass that file to the receiver to decode and decrypt it.
